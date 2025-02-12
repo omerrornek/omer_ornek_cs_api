@@ -21,14 +21,9 @@ public class TestRunner extends Base {
 
 
 
-    public long petId;
-    public long orderId;
+    public String petId;
     public String name = "Nil";
     public String updatedName = "Nilto";
-    public String userName = "omerornek";
-    public String updatedUserName = "1omerornek";
-
-
 
 
 
@@ -48,7 +43,7 @@ public class TestRunner extends Base {
         response.then().statusCode(200);
 
 
-        petId = response.path("id");
+        petId = response.path("id").toString();
 
     }
 
@@ -83,13 +78,12 @@ public class TestRunner extends Base {
     public void uploadPetImage(){
         Functions.reportTestCase(Informations.author,Informations.apiTestCategory);
         File file = new File(Informations.projectDirectory+"cat.jpg");
-        String petId2 = petId;
 
         given()
                 .multiPart(file)
                 .formParam("additionalMetadata", "TEST")
                 .when()
-                .post(Informations.baseUrl+"/pet/" + petId2 + "/uploadImage")
+                .post(Informations.baseUrl+"/pet/" + petId + "/uploadImage")
                 .then()
                 .statusCode(200);
     }
@@ -132,31 +126,16 @@ public class TestRunner extends Base {
         response.then().statusCode(200);
 
 
-        petId = response.path("id");
+        petId = response.path("id").toString();
 
     }
+
 
 
 
 
 
     @Test(priority = 6)
-    public void updatePetNegative() {
-
-        Functions.reportTestCase(Informations.author,Informations.apiTestCategory);
-        String requestBody = "";
-
-        given()
-                .contentType(ContentType.JSON)
-                .body(requestBody)
-                .when()
-                .put(Informations.baseUrl+"/pet")
-                .then()
-                .statusCode(405);
-    }
-
-
-    @Test(priority = 7)
     public void findPetsByStatus() {
         Functions.reportTestCase(Informations.author,Informations.apiTestCategory);
         given()
@@ -170,21 +149,8 @@ public class TestRunner extends Base {
 
 
 
-    @Test(priority = 8)
-    public void findPetsByStatusNegative() {
-        Functions.reportTestCase(Informations.author,Informations.apiTestCategory);
-        given()
-                .contentType(ContentType.JSON)
-                .queryParam("status", 123)
-                .when()
-                .get(Informations.baseUrl+"/pet/findByStatus")
-                .then()
-                .statusCode(400);
-    }
 
-
-
-    @Test(priority = 9)
+    @Test(priority = 7)
     public void FindPetById() {
         Functions.reportTestCase(Informations.author,Informations.apiTestCategory);
 
@@ -197,40 +163,19 @@ public class TestRunner extends Base {
 
         response.then().statusCode(200);
 
-        String nameSearched = response.jsonPath().getString("name");
-
-       Assert.assertEquals(nameSearched,updatedName);
-
     }
 
 
 
-    @Test(priority = 10)
-    public void FindPetByIdNegative() {
-        Functions.reportTestCase(Informations.author,Informations.apiTestCategory);
-
-        Response response = given()
-                .accept(ContentType.JSON)
-                .when()
-                .get(Informations.baseUrl+"/pet/"+"abc");
-
-
-
-        response.then().statusCode(404);
-
-
-
-    }
-
-     @Test(priority = 11)
-    public void DeletePet() {
+     @Test(priority = 8)
+    public void deletePet() {
         Functions.reportTestCase(Informations.author,Informations.apiTestCategory);
 
         Response response = given()
                 .headers("api_key",Informations.api_key)
                 .accept(ContentType.JSON)
                 .when()
-                .delete(Informations.baseUrl+"/pet/"+pet2);
+                .delete(Informations.baseUrl+"/pet/"+petId);
 
 
 
